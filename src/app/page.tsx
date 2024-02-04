@@ -11,7 +11,7 @@ import {
 export default function Home() {
   return (
     <div className="space-y-8">
-      <div className="flex gap-4">
+      <div className="flex flex-col md:flex-row gap-4">
         <Card className="w-full">
           <CardHeader>
             <CardTitle>Total</CardTitle>
@@ -58,7 +58,7 @@ export default function Home() {
                 <TableCell>John Doe</TableCell>
                 <TableCell>R$ 100.00</TableCell>
                 <TableCell>Delivered</TableCell>
-                <TableCell>{new Date().toLocaleDateString()}</TableCell>
+                <TableCell>{new Date().toLocaleDateString('pt')}</TableCell>
               </TableRow>
             ))}
           </TableBody>
