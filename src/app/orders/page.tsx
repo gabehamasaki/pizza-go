@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/table'
 import CreateOrderButton from './create-order'
 import DeleteOrderButton from './delete-order-button'
+import { Badge } from '@/components/ui/badge'
 
 export interface OrdersData {
   data: {
@@ -49,9 +50,13 @@ export default async function Orders() {
               <TableCell className="w-8 max-w-8">{item.id}</TableCell>
               <TableCell>{item.client}</TableCell>
               <TableCell>{item.value}</TableCell>
-              <TableCell>Delivered</TableCell>
               <TableCell>
-                {new Date(item.createdAt).toLocaleString('pt')}
+                <Badge className="bg-green-500 text-white hover:bg-green-400">
+                  Delivered
+                </Badge>
+              </TableCell>
+              <TableCell>
+                {new Date(item.createdAt).toLocaleDateString('pt')}
               </TableCell>
               <TableCell>
                 <DeleteOrderButton id={item.id} />

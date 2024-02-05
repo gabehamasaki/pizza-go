@@ -7,8 +7,21 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { OrdersData } from './orders/page'
+import { Badge } from '@/components/ui/badge'
 
-export default function Home() {
+export default async function Home() {
+  const response = await fetch(
+    'http://localhost:3000/api/orders?limit=5&order=asc',
+    {
+      cache: 'no-store',
+    },
+  )
+  const { data } = (await response.json()) as OrdersData
+
+  const totalResponse = await fetch('http://localhost:3000/api/orders/total')
+  const { data: total } = await totalResponse.json()
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row gap-4">
@@ -17,7 +30,12 @@ export default function Home() {
             <CardTitle>Total</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>R$ 900.00</p>
+            <p>
+              {total.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}
+            </p>
           </CardContent>
         </Card>
         <Card className="w-full">
@@ -52,13 +70,24 @@ export default function Home() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Array.from({ length: 9 }).map((_, index) => (
-              <TableRow key={index}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>John Doe</TableCell>
-                <TableCell>R$ 100.00</TableCell>
-                <TableCell>Delivered</TableCell>
-                <TableCell>{new Date().toLocaleDateString('pt')}</TableCell>
+            {data.map((order) => (
+              <TableRow key={order.id}>
+                <TableCell>{order.id}</TableCell>
+                <TableCell>{order.client}</TableCell>
+                <TableCell>
+                  {order.value.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  })}
+                </TableCell>
+                <TableCell>
+                  <Badge className="bg-green-500 text-white hover:bg-green-400">
+                    Delivered
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  {new Date(order.createdAt).toLocaleDateString('pt-BR')}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
