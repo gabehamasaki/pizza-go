@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export interface DeleteOrderProps {
   id: string
@@ -13,6 +14,12 @@ export default function DeleteOrderButton(props: DeleteOrderProps) {
     fetch(`http://localhost:3000/api/orders/${id}`, {
       method: 'DELETE',
     })
+      .then(() => {
+        toast.success('Order successfully deleted')
+      })
+      .catch(() => {
+        toast.error('Error deleting order')
+      })
   }
   return (
     <Button variant="destructive" className="p-0 w-8 h-8" onClick={onDelete}>

@@ -24,11 +24,26 @@ import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '@/lib/react-query'
 
 export const createOrderSchema = z.object({
   client: z.string(),
   value: z.string(),
 })
+
+async function createOrder({
+  client,
+  value,
+}: z.infer<typeof createOrderSchema>) {
+  fetch('http://localhost:3000/api/orders', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ client, value }),
+  })
+}
 
 export default function CreateOrderButton() {
   const form = useForm<z.infer<typeof createOrderSchema>>({
@@ -38,20 +53,27 @@ export default function CreateOrderButton() {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const { mutateAsync: createOrderAsync } = useMutation({
+    mutationFn: createOrder,
+    onSuccess(_, variables) {
+      const cached = queryClient.getQueryData(['orders'])
+      queryClient.setQueryData(['orders'], (data) => [
+        ...data,
+        {
+          client: variables.client,
+          value: variables.value,
+        },
+      ])
+    },
+  })
+
   const onSubmit = (data: z.infer<typeof createOrderSchema>) => {
     const { client, value } = data
     setLoading(true)
-    fetch('http://localhost:3000/api/orders', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ client, value }),
-    })
-      .then((response) => response.json)
+    createOrderAsync({ client, value })
       .then(() => {
         setIsOpen(false)
-        toast.success('Order created sucessefuly')
+        toast.success('Order successfully created')
         setLoading(false)
       })
       .catch(() => {

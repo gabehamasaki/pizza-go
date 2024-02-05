@@ -4,6 +4,7 @@ import './globals.css'
 import { cn } from '@/lib/utils'
 import Header from '@/components/Header'
 import { Toaster } from '@/components/ui/sonner'
+import QueryClient from '@/providers/react-query-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,11 +24,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(inter.className, 'dark')}>
-        <Header />
-        <main className="flex-1">
-          <div className="container relative py-6">{children}</div>
-        </main>
-        <Toaster richColors />
+        <QueryClient>
+          <Header />
+          <main className="flex-1">
+            <div className="container relative py-6">{children}</div>
+          </main>
+          <Toaster richColors />
+        </QueryClient>
       </body>
     </html>
   )
