@@ -56,8 +56,7 @@ export default function CreateOrderButton() {
   const { mutateAsync: createOrderAsync } = useMutation({
     mutationFn: createOrder,
     onSuccess(_, variables) {
-      const cached = queryClient.getQueryData(['orders'])
-      queryClient.setQueryData(['orders'], (data) => [
+      queryClient.setQueryData(['orders'], (data: []) => [
         ...data,
         {
           client: variables.client,
