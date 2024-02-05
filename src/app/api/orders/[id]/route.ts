@@ -14,3 +14,16 @@ export async function GET(
     data: order,
   })
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
+  await prisma.order.delete({
+    where: {
+      id: params.id,
+    },
+  })
+
+  return Response.json({})
+}

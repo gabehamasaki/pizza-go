@@ -9,7 +9,6 @@ import {
   DialogTrigger,
   DialogClose,
 } from '@/components/ui/dialog'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Form,
   FormControl,
@@ -18,10 +17,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { PlusCircle } from 'lucide-react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2, PlusCircle } from 'lucide-react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
+import { toast } from 'sonner'
+import { useState } from 'react'
 
 export const createOrderSchema = z.object({
   client: z.string(),
@@ -33,11 +35,33 @@ export default function CreateOrderButton() {
     resolver: zodResolver(createOrderSchema),
   })
 
+  const [isOpen, setIsOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+
   const onSubmit = (data: z.infer<typeof createOrderSchema>) => {
-    console.log(data)
+    const { client, value } = data
+    setLoading(true)
+    fetch('http://localhost:3000/api/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ client, value }),
+    })
+      .then((response) => response.json)
+      .then(() => {
+        setIsOpen(false)
+        toast.success('Order created sucessefuly')
+        setLoading(false)
+      })
+      .catch(() => {
+        setIsOpen(false)
+        toast.error('Error creating order')
+        setLoading(false)
+      })
   }
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className="text-center gap-1 font-bold">
           <PlusCircle className="size-4" />
@@ -78,9 +102,13 @@ export default function CreateOrderButton() {
             />
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="destructive">Cancel</Button>
+                <Button variant="destructive" disabled={loading}>
+                  Cancel
+                </Button>
               </DialogClose>
-              <Button type="submit">Create</Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? <Loader2 className="animate-spin" /> : 'Create'}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

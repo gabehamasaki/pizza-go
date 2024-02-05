@@ -7,8 +7,25 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import CreateOrderButton from './create-order'
+import { Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import DeleteOrderButton from './delete-order-button'
 
-export default function Orders() {
+export interface OrdersData {
+  data: {
+    id: string
+    client: string
+    value: number
+    createdAt: Date
+  }[]
+}
+
+export default async function Orders() {
+  const response = await fetch('http://localhost:3000/api/orders', {
+    cache: 'no-store',
+  })
+  const { data } = (await response.json()) as OrdersData
+
   return (
     <div className="space-y-8 w-full">
       <div className="flex items-center justify-between">
@@ -25,16 +42,22 @@ export default function Orders() {
             <TableHead>Value</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Date</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Array.from({ length: 32 }).map((_, index) => (
-            <TableRow key={index}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>John Doe</TableCell>
-              <TableCell>R$ 100.00</TableCell>
+          {data.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell className="max-w-32">{item.id}</TableCell>
+              <TableCell>{item.client}</TableCell>
+              <TableCell>{item.value}</TableCell>
               <TableCell>Delivered</TableCell>
-              <TableCell>{new Date().toLocaleDateString('pt')}</TableCell>
+              <TableCell>
+                {new Date(item.createdAt).toLocaleString('pt')}
+              </TableCell>
+              <TableCell>
+                <DeleteOrderButton id={item.id} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
