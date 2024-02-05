@@ -24,6 +24,7 @@ import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export const createOrderSchema = z.object({
   client: z.string(),
@@ -31,6 +32,7 @@ export const createOrderSchema = z.object({
 })
 
 export default function CreateOrderButton() {
+  const router = useRouter()
   const form = useForm<z.infer<typeof createOrderSchema>>({
     resolver: zodResolver(createOrderSchema),
   })
@@ -50,11 +52,13 @@ export default function CreateOrderButton() {
     })
       .then((response) => response.json)
       .then(() => {
+        router.refresh()
         setIsOpen(false)
-        toast.success('Order created sucessefuly')
+        toast.success('Order created successfully')
         setLoading(false)
       })
       .catch(() => {
+        router.refresh()
         setIsOpen(false)
         toast.error('Error creating order')
         setLoading(false)

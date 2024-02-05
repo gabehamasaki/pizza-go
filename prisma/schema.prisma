@@ -12,7 +12,7 @@ datasource db {
 }
 
 model Order {
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   client    String
   value     Float
   createdAt DateTime @default(now())

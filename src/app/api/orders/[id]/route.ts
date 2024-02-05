@@ -7,7 +7,7 @@ export async function GET(
   const id = params.id
   const order = await prisma.order.findFirst({
     where: {
-      id,
+      id: Number(id),
     },
   })
   return Response.json({
@@ -21,7 +21,7 @@ export async function DELETE(
 ) {
   await prisma.order.delete({
     where: {
-      id: params.id,
+      id: Number(params.id),
     },
   })
 

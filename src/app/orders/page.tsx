@@ -7,8 +7,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import CreateOrderButton from './create-order'
-import { Trash2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import DeleteOrderButton from './delete-order-button'
 
 export interface OrdersData {
@@ -48,7 +46,7 @@ export default async function Orders() {
         <TableBody>
           {data.map((item) => (
             <TableRow key={item.id}>
-              <TableCell className="max-w-32">{item.id}</TableCell>
+              <TableCell className="w-8 max-w-8">{item.id}</TableCell>
               <TableCell>{item.client}</TableCell>
               <TableCell>{item.value}</TableCell>
               <TableCell>Delivered</TableCell>
