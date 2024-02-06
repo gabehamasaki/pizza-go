@@ -6,32 +6,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import CreateOrderButton from './create-order'
-import DeleteOrderButton from './delete-order-button'
+import { OrdersData } from '@/app/orders/page'
 import { Badge } from '@/components/ui/badge'
 
-export interface OrdersData {
-  data: {
-    id: string
-    client: string
-    value: number
-    createdAt: Date
-  }[]
-}
-
-export default async function Orders() {
-  const response = await fetch('http://localhost:3000/api/orders', {
+export default async function OrdersResumeTable() {
+  const response = await fetch('http://localhost:3000/api/orders?limit=5', {
     cache: 'no-store',
   })
   const { data } = (await response.json()) as OrdersData
 
   return (
-    <div className="space-y-8 w-full">
+    <div className="w-full space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-bold text-lg">Orders</h1>
-        <div className="flex">
-          <CreateOrderButton />
-        </div>
+        <h1 className="text-bold text-lg">Latest Orders</h1>
       </div>
       <Table>
         <TableHeader className="sticky w-full top-0 h-10 border-b-2 border-border rounded-t-md">
@@ -41,25 +28,26 @@ export default async function Orders() {
             <TableHead>Value</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Date</TableHead>
-            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>{item.id}</TableCell>
-              <TableCell>{item.client}</TableCell>
-              <TableCell>{item.value}</TableCell>
+          {data.map((order) => (
+            <TableRow key={order.id}>
+              <TableCell>{order.id}</TableCell>
+              <TableCell>{order.client}</TableCell>
+              <TableCell>
+                {order.value.toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })}
+              </TableCell>
               <TableCell>
                 <Badge className="bg-green-500 text-white hover:bg-green-400">
                   Delivered
                 </Badge>
               </TableCell>
               <TableCell>
-                {new Date(item.createdAt).toLocaleDateString('pt')}
-              </TableCell>
-              <TableCell>
-                <DeleteOrderButton id={item.id} />
+                {new Date(order.createdAt).toLocaleDateString('pt-BR')}
               </TableCell>
             </TableRow>
           ))}
